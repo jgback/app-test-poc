@@ -121,9 +121,6 @@ if st.button("Estimate Cost"):
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 def ask_gpt(prompt):
-    """Send a question to OpenAI's GPT and return the response."""
-    try:
-        def ask_gpt(prompt):
     """Send a question to OpenAI's GPT and return the response (updated for OpenAI API v1.0+)."""
     try:
         client = openai.OpenAI()  # Use the new OpenAI client
@@ -134,13 +131,9 @@ def ask_gpt(prompt):
                 {"role": "user", "content": prompt}
             ]
         )
-        return response.choices[0].message.content
+        return response.choices[0].message.content  # Ensure correct attribute access
     except Exception as e:
-        return f"⚠️ Error: {e}"
-        )
-        return response["choices"][0]["message"]["content"]
-    except Exception as e:
-        return f"⚠️ Error: {e}"
+        return f"⚠️ Error: {e}"  # This should appear only once
     
 st.write("🚀 This is an early proof of concept for a healthcare cost estimator!")
 
