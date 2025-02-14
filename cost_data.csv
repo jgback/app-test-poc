@@ -1,0 +1,5 @@
+Procedure,Provider Fee,Facility Fee,Imaging Fee,Anesthesia Fee,Total Estimated Cost,ZIP Code
+MRI,500,1000,300,0,1800,98101
+CT Scan,400,800,250,0,1450,98101
+Knee Surgery,5000,12000,1500,3000,21500,98101
+X-ray,100,200,50,0,350,98101

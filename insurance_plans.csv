@@ -1,0 +1,5 @@
+Plan Name,Total Deductible,Remaining Deductible,Co-Pay (%),Co-Insurance (%),Out-of-Pocket Max
+Basic PPO,1000,500,20,10,5000
+Premium PPO,500,250,15,20,3000
+HMO Standard,2000,1500,10,15,7000
+High Deductible Plan,3000,2500,30,10,6000
