@@ -5,6 +5,36 @@ import pandas as pd
 # Load API Key from Streamlit Secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
+# --- ✅ Move `ask_gpt()` Here ---
+def ask_gpt(prompt, procedure, zip_code, total_cost, out_of_pocket_cost, insurance_covered):
+    """Send a question to OpenAI's GPT with context about procedure costs and insurance coverage."""
+    try:
+        client = openai.OpenAI()
+
+        context = f"""
+        You are a helpful assistant that provides cost breakdowns and insurance coverage details for healthcare procedures.
+        Here is the user's data:
+        - Procedure: {procedure}
+        - ZIP Code: {zip_code}
+        - Total Estimated Cost: ${total_cost:,.2f}
+        - Out-of-Pocket Cost (User Pays): ${out_of_pocket_cost:,.2f}
+        - Covered by Insurance: ${insurance_covered:,.2f}
+
+        Use this information to answer the user's question.
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": context},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"⚠️ Error: {e}"
+
 # Set page layout to ensure sidebar is visible
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 
