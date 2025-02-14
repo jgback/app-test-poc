@@ -56,11 +56,13 @@ filtered_df = df[(df["Procedure"] == procedure) & (df["ZIP Code"] == zip_code)]
 
 if st.button("Estimate Cost"):
     if not filtered_df.empty:
-        provider_fee = filtered_df["Provider Fee"].values[0]
-        facility_fee = filtered_df["Facility Fee"].values[0]
-        imaging_fee = filtered_df["Imaging Fee"].values[0]
-        anesthesia_fee = filtered_df["Anesthesia Fee"].values[0]
-        total_cost = filtered_df["Total Estimated Cost"].values[0]
+    procedure_name = procedure
+    zip_code_value = zip_code
+    total_cost_value = filtered_df["Total Estimated Cost"].values[0]
+    out_of_pocket_value = total_out_of_pocket  # Corrected variable
+    insurance_covered_value = total_covered_by_insurance
+
+    response = ask_gpt(user_question, procedure_name, zip_code_value, total_cost_value, out_of_pocket_value, insurance_covered_value)
 
         # Step 1: Apply Deductible to Each Component
         remaining_deductible = deductible_remaining  # Initialize deductible
