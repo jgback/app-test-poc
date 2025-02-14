@@ -120,31 +120,57 @@ if st.button("Estimate Cost"):
 # Load OpenAI API key from Streamlit Secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-def ask_gpt(prompt):
-    """Send a question to OpenAI's GPT and return the response (updated for OpenAI API v1.0+)."""
+def ask_gpt(prompt, procedure, zip_code, total_cost, out_of_pocket_cost, insurance_covered):
+    """Send a question to OpenAI's GPT with context about procedure costs and insurance coverage."""
     try:
-        client = openai.OpenAI()  # Use the new OpenAI client
+        client = openai.OpenAI()
+
+        context = f"""
+        You are a helpful assistant that provides cost breakdowns and insurance coverage details for healthcare procedures.
+        Here is the user's data:
+        - Procedure: {procedure}
+        - ZIP Code: {zip_code}
+        - Total Estimated Cost: ${total_cost:,.2f}
+        - Out-of-Pocket Cost (User Pays): ${out_of_pocket_cost:,.2f}
+        - Covered by Insurance: ${insurance_covered:,.2f}
+
+        Use this information to answer the user's question.
+        """
+
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "You are an assistant that provides cost breakdowns and insurance coverage explanations for healthcare procedures."},
+                {"role": "system", "content": context},
                 {"role": "user", "content": prompt}
             ]
         )
-        return response.choices[0].message.content  # Ensure correct attribute access
+
+        return response.choices[0].message.content
     except Exception as e:
-        return f"⚠️ Error: {e}"  # This should appear only once
+        return f"⚠️ Error: {e}"
     
 st.write("🚀 This is an early proof of concept for a healthcare cost estimator!")
 
 st.write("### 🤖 Ask the AI About Your Healthcare Costs!")
+
 user_question = st.chat_input("Ask a question about procedure costs, insurance coverage, or savings...")
 
 if user_question:
     with st.chat_message("user"):
         st.write(user_question)
 
-    response = ask_gpt(user_question)
+    # Ensure we have valid cost data before calling AI
+    if not filtered_df.empty:
+        procedure_name = procedure
+        zip_code_value = zip_code
+        total_cost_value = filtered_df["Total Estimated Cost"].values[0]
+        out_of_pocket_value = user_out_of_pocket
+        insurance_covered_value = total_covered_by_insurance
 
-    with st.chat_message("assistant"):
-        st.write(response)
+        response = ask_gpt(user_question, procedure_name, zip_code_value, total_cost_value, out_of_pocket_value, insurance_covered_value)
+
+        with st.chat_message("assistant"):
+            st.write(response)
+    else:
+        with st.chat_message("assistant"):
+            st.write("⚠️ No cost data found for the selected procedure and ZIP code. Please try a different search.")
