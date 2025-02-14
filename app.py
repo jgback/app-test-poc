@@ -161,12 +161,11 @@ if user_question:
     with st.chat_message("user"):
         st.write(user_question)
 
-    # Ensure we have valid cost data before calling AI
-    if not filtered_df.empty:
+    if not filtered_df.empty:  # <-- Ensure the chatbot only runs when cost data is available
         procedure_name = procedure
         zip_code_value = zip_code
         total_cost_value = filtered_df["Total Estimated Cost"].values[0]
-        out_of_pocket_value = user_out_of_pocket
+        out_of_pocket_value = total_out_of_pocket  # Corrected variable
         insurance_covered_value = total_covered_by_insurance
 
         response = ask_gpt(user_question, procedure_name, zip_code_value, total_cost_value, out_of_pocket_value, insurance_covered_value)
@@ -175,4 +174,4 @@ if user_question:
             st.write(response)
     else:
         with st.chat_message("assistant"):
-            st.write("⚠️ No cost data found for the selected procedure and ZIP code. Please try a different search.")
+            st.write("⚠️ No cost data found for the selected procedure and ZIP code. Try entering a valid procedure and ZIP.")
