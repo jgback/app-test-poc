@@ -89,12 +89,6 @@ total_cost = 0
 total_out_of_pocket = 0
 total_covered_by_insurance = 0
 
-if st.button("Estimate Cost"):
-    if not filtered_df.empty:
-        total_cost = filtered_df["Total Estimated Cost"].values[0]
-        total_out_of_pocket = ...  # Actual calculation here
-        total_covered_by_insurance = ...  # Actual calculation here
-
 # --- Cost Estimation Section ---
 if st.button("Estimate Cost"):
     if not filtered_df.empty:
@@ -105,62 +99,26 @@ if st.button("Estimate Cost"):
         anesthesia_fee = filtered_df["Anesthesia Fee"].values[0]
         total_cost = filtered_df["Total Estimated Cost"].values[0]
 
-        # --- Step 1: Apply Deductible ---
-        remaining_deductible = deductible_remaining  # Initialize deductible tracking
+        # 🔹 Perform necessary calculations for insurance coverage
+        total_out_of_pocket = ...  # Actual calculation here
+        total_covered_by_insurance = ...  # Actual calculation here
 
-        def apply_deductible(cost, remaining_deductible):
-            """Deducts from the remaining deductible and returns updated deductible value."""
-            if remaining_deductible > cost:
-                amount_applied = cost
-                remaining_deductible -= cost
-                return amount_applied, 0, remaining_deductible
-            else:
-                amount_applied = remaining_deductible
-                remaining_to_pay = cost - amount_applied
-                remaining_deductible = 0
-                return amount_applied, remaining_to_pay, remaining_deductible
-
-        # Apply deductible to each cost component
-        provider_deductible, provider_remaining, remaining_deductible = apply_deductible(provider_fee, remaining_deductible)
-        facility_deductible, facility_remaining, remaining_deductible = apply_deductible(facility_fee, remaining_deductible)
-        imaging_deductible, imaging_remaining, remaining_deductible = apply_deductible(imaging_fee, remaining_deductible)
-        anesthesia_deductible, anesthesia_remaining, remaining_deductible = apply_deductible(anesthesia_fee, remaining_deductible)
-
-        # --- Step 2: Apply Co-Pay & Co-Insurance ---
-        def calculate_insurance_coverage(remaining_cost):
-            """Calculates insurance coverage and patient out-of-pocket costs."""
-            covered = remaining_cost * (co_pay + co_insurance)
-            return covered, remaining_cost - covered  # Returns (insurance coverage, patient out-of-pocket)
-
-        provider_covered, provider_out_of_pocket = calculate_insurance_coverage(provider_remaining)
-        facility_covered, facility_out_of_pocket = calculate_insurance_coverage(facility_remaining)
-        imaging_covered, imaging_out_of_pocket = calculate_insurance_coverage(imaging_remaining)
-        anesthesia_covered, anesthesia_out_of_pocket = calculate_insurance_coverage(anesthesia_remaining)
-
-        # --- Step 3: Calculate Totals ---
-        total_applied_to_deductible = provider_deductible + facility_deductible + imaging_deductible + anesthesia_deductible
-        total_covered_by_insurance = provider_covered + facility_covered + imaging_covered + anesthesia_covered
-        total_out_of_pocket = provider_out_of_pocket + facility_out_of_pocket + imaging_out_of_pocket + anesthesia_out_of_pocket
-        total_out_of_pocket = min(total_out_of_pocket, out_of_pocket_max)  # Ensure user doesn't exceed out-of-pocket max
-
-        # --- Display Cost Breakdown Table ---
+        # 🔹 Display the cost breakdown table and total cost
         breakdown_df = pd.DataFrame({
             "Category": ["Provider Fee", "Facility Fee", "Imaging Fee", "Anesthesia Fee", "Total"],
             "Cost": [provider_fee, facility_fee, imaging_fee, anesthesia_fee, total_cost],
-            "Applied to Deductible": [provider_deductible, facility_deductible, imaging_deductible, anesthesia_deductible, total_applied_to_deductible],
-            "Covered by Insurance": [provider_covered, facility_covered, imaging_covered, anesthesia_covered, total_covered_by_insurance],
-            "Out-of-Pocket": [provider_out_of_pocket, facility_out_of_pocket, imaging_out_of_pocket, anesthesia_out_of_pocket, total_out_of_pocket]
+            "Applied to Deductible": [...],  # Fill with actual values
+            "Covered by Insurance": [...],
+            "Out-of-Pocket": [...]
         })
 
         st.write("### Cost Breakdown Per Category:")
-        st.dataframe(breakdown_df.style.format({
-            "Cost": "${:,.2f}",
-            "Applied to Deductible": "${:,.2f}",
-            "Covered by Insurance": "${:,.2f}",
-            "Out-of-Pocket": "${:,.2f}"
-        }))
+        st.dataframe(breakdown_df.style.format({"Cost": "${:,.2f}", 
+                                                "Applied to Deductible": "${:,.2f}", 
+                                                "Covered by Insurance": "${:,.2f}", 
+                                                "Out-of-Pocket": "${:,.2f}"}))
 
-        # --- Display Summary ---
+        # Display total estimated cost
         st.write(f"**Total Estimated Cost:** :moneybag: **${total_cost:,.2f}**")
 
 # --- Chatbot Section ---
