@@ -116,7 +116,12 @@ if st.button("Estimate Cost"):
         })
 
         st.write("### Cost Breakdown Per Category:")
-        st.dataframe(breakdown_df.style.format("${:,.2f}"))
+        st.dataframe(breakdown_df.style.format({
+            "Cost": "${:,.2f}",
+            "Applied to Deductible": "${:,.2f}",
+            "Covered by Insurance": "${:,.2f}",
+            "Out-of-Pocket": "${:,.2f}"
+        }))
 
         # --- Display Summary ---
         st.write(f"**Total Estimated Cost:** :moneybag: **${total_cost:,.2f}**")
