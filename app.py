@@ -123,10 +123,20 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 def ask_gpt(prompt):
     """Send a question to OpenAI's GPT and return the response."""
     try:
-        response = openai.ChatCompletion.create(
+        def ask_gpt(prompt):
+    """Send a question to OpenAI's GPT and return the response (updated for OpenAI API v1.0+)."""
+    try:
+        client = openai.OpenAI()  # Use the new OpenAI client
+        response = client.chat.completions.create(
             model="gpt-4",
-            messages=[{"role": "system", "content": "You are an assistant that provides cost breakdowns and insurance coverage explanations for healthcare procedures."},
-                      {"role": "user", "content": prompt}]
+            messages=[
+                {"role": "system", "content": "You are an assistant that provides cost breakdowns and insurance coverage explanations for healthcare procedures."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"⚠️ Error: {e}"
         )
         return response["choices"][0]["message"]["content"]
     except Exception as e:
