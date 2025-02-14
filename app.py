@@ -107,9 +107,18 @@ if st.button("Estimate Cost"):
         breakdown_df = pd.DataFrame({
             "Category": ["Provider Fee", "Facility Fee", "Imaging Fee", "Anesthesia Fee", "Total"],
             "Cost": [provider_fee, facility_fee, imaging_fee, anesthesia_fee, total_cost],
-            "Applied to Deductible": [...],  # Fill with actual values
-            "Covered by Insurance": [...],
-            "Out-of-Pocket": [...]
+            "Applied to Deductible": [
+                provider_deductible, facility_deductible, imaging_deductible, anesthesia_deductible, 
+                provider_deductible + facility_deductible + imaging_deductible + anesthesia_deductible  # Total
+            ],
+            "Covered by Insurance": [
+                provider_covered, facility_covered, imaging_covered, anesthesia_covered, 
+                provider_covered + facility_covered + imaging_covered + anesthesia_covered  # Total
+            ],
+            "Out-of-Pocket": [
+                provider_out_of_pocket, facility_out_of_pocket, imaging_out_of_pocket, anesthesia_out_of_pocket, 
+                provider_out_of_pocket + facility_out_of_pocket + imaging_out_of_pocket + anesthesia_out_of_pocket  # Total
+            ]
         })
 
         st.write("### Cost Breakdown Per Category:")
