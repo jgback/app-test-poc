@@ -84,9 +84,16 @@ st.sidebar.write(f"**Out-of-Pocket Max:** ${out_of_pocket_max}")
 # --- Filter Cost Data Based on User Input ---
 filtered_df = df[(df["Procedure"] == procedure) & (df["ZIP Code"] == zip_code)]
 
-# 🔹 Ensure `total_out_of_pocket` is initialized before chatbot uses it
-total_out_of_pocket = 0  # Default value to prevent chatbot errors
-total_covered_by_insurance = 0  # Default value
+# 🔹 Ensure `total_cost`, `total_out_of_pocket`, and `total_covered_by_insurance` exist before chatbot use
+total_cost = 0
+total_out_of_pocket = 0
+total_covered_by_insurance = 0
+
+if st.button("Estimate Cost"):
+    if not filtered_df.empty:
+        total_cost = filtered_df["Total Estimated Cost"].values[0]
+        total_out_of_pocket = ...  # Actual calculation here
+        total_covered_by_insurance = ...  # Actual calculation here
 
 # --- Cost Estimation Section ---
 if st.button("Estimate Cost"):
