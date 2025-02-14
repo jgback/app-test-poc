@@ -1,5 +1,9 @@
+import openai
 import streamlit as st
 import pandas as pd
+
+# Load API Key from Streamlit Secrets
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Set page layout to ensure sidebar is visible
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
@@ -112,5 +116,32 @@ if st.button("Estimate Cost"):
 
         # Summary Results
         st.write(f"**Total Estimated Cost:** :moneybag: **${total_cost:,.2f}**")
-        
+
+# Load OpenAI API key from Streamlit Secrets
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+def ask_gpt(prompt):
+    """Send a question to OpenAI's GPT and return the response."""
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "system", "content": "You are an assistant that provides cost breakdowns and insurance coverage explanations for healthcare procedures."},
+                      {"role": "user", "content": prompt}]
+        )
+        return response["choices"][0]["message"]["content"]
+    except Exception as e:
+        return f"⚠️ Error: {e}"
+    
 st.write("🚀 This is an early proof of concept for a healthcare cost estimator!")
+
+st.write("### 🤖 Ask the AI About Your Healthcare Costs!")
+user_question = st.chat_input("Ask a question about procedure costs, insurance coverage, or savings...")
+
+if user_question:
+    with st.chat_message("user"):
+        st.write(user_question)
+
+    response = ask_gpt(user_question)
+
+    with st.chat_message("assistant"):
+        st.write(response)
